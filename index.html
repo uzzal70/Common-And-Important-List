@@ -1,0 +1,70 @@
+import React from 'react';
+import { useFormik } from 'formik';
+
+const YourFormComponent = () => {
+  const adultCount = 2; // Replace with your actual counts
+  const childCount = 2;
+  const infantCount = 2;
+
+  const formik = useFormik({
+    initialValues: {
+      adult: [...new Array(adultCount)].map((item, index) => ({
+        type: 'ADT',
+        givenName: '',
+        passport: null,
+        visa: null,
+      })),
+      child: [...new Array(childCount)].map((item, index) => ({
+        type: 'CNN',
+        givenName: '',
+        passport: null,
+        visa: null,
+      })),
+      infant: [...new Array(infantCount)].map((item, index) => ({
+        type: 'INF',
+        givenName: '',
+        passport: null,
+        visa: null,
+      })),
+    },
+    onSubmit: (values) => {
+      // Handle form submission, including file uploads
+      console.log(values);
+    },
+  });
+
+  const handleFileChange = (type, index, field, event) => {
+    const { setFieldValue } = formik;
+    setFieldValue(`${type}[${index}].${field}`, event.currentTarget.files[0]);
+  };
+
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      {['adult', 'child', 'infant'].map((type, typeIndex) => (
+        <div key={type}>
+          {formik.values[type].map((passenger, index) => (
+            <div key={`${type}-${index}`}>
+              <label>
+                {`${type} ${index + 1} Passport:`}
+                <input
+                  type="file"
+                  onChange={(e) => handleFileChange(type, index, 'passport', e)}
+                />
+              </label>
+              <label>
+                {`${type} ${index + 1} Visa:`}
+                <input
+                  type="file"
+                  onChange={(e) => handleFileChange(type, index, 'visa', e)}
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+      ))}
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+export default YourFormComponent;
